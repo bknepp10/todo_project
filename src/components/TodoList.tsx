@@ -1,58 +1,92 @@
-import React, { useState, KeyboardEvent } from "react";
+import { useState } from "react";
 import NewTodoItem from "./NewTodoItem";
-import TodoItem from "./TodoItem";
 import CurrentTodosList from "./CurrentTodosList";
 import CompletedTodosList from "./CompletedTodosList";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+export type TodoNode = {
+  id: number;
+  todo: string;
+  isCompleted: boolean;
+};
 
 const TodoList = () => {
-  const [todoItems, setTodoItems] = useState<string[]>([]);
-  const [completedTodos, setCompletedTodos] = useState<string[]>([]);
+  const [todoItems, setTodoItems] = useState<TodoNode[]>([]);
 
   const handleNewTodo = (newTodo: string) => {
     if (newTodo.trim().length > 0) {
-      setTodoItems([...todoItems, newTodo]);
+      toast.success("New ToDo: " + newTodo, {
+        autoClose: 1000,
+        hideProgressBar: true,
+        theme: "colored",
+      });
+
+      const todoData = {
+        id: todoItems.length,
+        todo: newTodo,
+        isCompleted: false,
+      };
+
+      setTodoItems([...todoItems, todoData]);
+
+      console.log("items", todoItems);
     }
   };
 
-  const handleUndoCompleted = (index: number) => {
-    removeCompletedTodoAtIndex(index);
+  const handleUndoCompleted = (id: number) => {
+    toggleCompletedTodoState(id);
+
+    toast.info("Todo updated.", {
+      autoClose: 1000,
+      hideProgressBar: true,
+      theme: "colored",
+    });
   };
 
-  const handleCompleteTodo = (index: number) => {
-    const currentTodos = [...todoItems];
-    const completedTodo = currentTodos.splice(index, 1).pop();
+  const handleCompleteTodo = (id: number) => {
+    toggleCompletedTodoState(id);
 
-    if (!completedTodo) {
-      //throw error here
-      return;
-    }
-
-    setCompletedTodos([completedTodo, ...completedTodos]);
-
-    removeCurrentTodoAtIndex(index);
+    toast.success("Todo completed!", {
+      autoClose: 1000,
+      hideProgressBar: true,
+      theme: "colored",
+    });
   };
 
-  const removeCurrentTodoAtIndex = (index: number) => {
-    let todos = [...todoItems];
-    todos.splice(index, 1);
-    setTodoItems([...todos]);
+  const toggleCompletedTodoState = (id: number) => {
+    const updatedTodos = todoItems.map((todo) => {
+      if (todo.id == id) {
+        return { ...todo, isCompleted: !todo.isCompleted };
+      }
+      return todo;
+    });
+
+    console.log(updatedTodos);
+
+    setTodoItems(updatedTodos);
   };
 
-  const removeCompletedTodoAtIndex = (index: number) => {
-    let todos = [...completedTodos];
-    const undoneTodo = todos.splice(index, 1);
-    setTodoItems([...todoItems, ...undoneTodo]);
-    setCompletedTodos([...todos]);
+  const handleRemoveTodo = (id: number) => {
+    const filteredTodos = todoItems.filter((todo) => todo.id !== id);
+
+    setTodoItems(filteredTodos);
+
+    toast.error("Todo deleted.", {
+      autoClose: 1000,
+      hideProgressBar: true,
+      theme: "colored",
+    });
   };
 
   return (
     <>
-      <div className="w-25 d-flex flex-column">
+      <div className="w-50 d-flex flex-column rounded-4 p-4 bg-primary bg-opacity-50">
         {todoItems.length > 0 && (
           <CurrentTodosList
             todos={todoItems}
             doCompleteTodo={handleCompleteTodo}
-            doRemoveTodo={removeCurrentTodoAtIndex}
+            doRemoveTodo={handleRemoveTodo}
           />
         )}
 
@@ -60,13 +94,11 @@ const TodoList = () => {
           <NewTodoItem addNewTodo={handleNewTodo} />
         </div>
 
-        {completedTodos.length > 0 && (
-          <CompletedTodosList
-            todos={completedTodos}
-            doRemoveTodo={removeCurrentTodoAtIndex}
-            doUndoCompleted={handleUndoCompleted}
-          />
-        )}
+        <CompletedTodosList
+          todos={todoItems}
+          doUndoCompleted={handleUndoCompleted}
+          doRemoveCompleted={handleRemoveTodo}
+        />
       </div>
     </>
   );

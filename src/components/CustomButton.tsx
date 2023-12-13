@@ -2,17 +2,23 @@ import { ReactNode } from "react";
 
 interface Props {
   onClick: () => void;
-  key: string;
+  buttonKey: string;
   title?: string;
   classes?: string;
   children?: ReactNode;
 }
 
-const CustomButton = ({ onClick, key, title, classes, children }: Props) => {
+const CustomButton = ({
+  onClick,
+  buttonKey,
+  title,
+  classes,
+  children,
+}: Props) => {
   return (
     <>
       <button
-        key={key}
+        key={buttonKey}
         title={title}
         className={"btn " + classes}
         type="button"

@@ -4,19 +4,21 @@ import Trash from "./icons/Trash";
 import UndoArrow from "./icons/UndoArrow";
 
 interface Props {
-  index: number;
+  itemID: number;
   todo: string;
+  auxClasses?: string;
   removeTodo?: () => void;
   completeTodo?: () => void;
   undoCompleted?: () => void;
 }
 
 const TodoItem = ({
-  index,
+  itemID,
   todo,
   removeTodo,
   completeTodo,
   undoCompleted,
+  auxClasses,
 }: Props) => {
   const [showButtons, setShowButtons] = useState(false);
   //TODO need to slot or something
@@ -24,7 +26,7 @@ const TodoItem = ({
     <li
       onMouseEnter={() => setShowButtons(true)}
       onMouseLeave={() => setShowButtons(false)}
-      key={index}
+      key={itemID}
       className="rounded-4 my-1 text-center d-flex flex-row"
     >
       <div className="input-group m-2">
@@ -40,13 +42,19 @@ const TodoItem = ({
             />
           </div>
         )}
-        <input type="text" readOnly value={todo} className="form-control" />
-        {undoCompleted && (
+        <input
+          type="text"
+          readOnly
+          value={todo}
+          className={"form-control " + auxClasses}
+        />
+        {showButtons && undoCompleted && (
           <>
             <CustomButton
               onClick={() => undoCompleted()}
               classes="btn-outline-warning"
-              key={"undo-" + index}
+              key={"undo-" + itemID}
+              buttonKey={"undo-" + itemID}
             >
               <UndoArrow />
             </CustomButton>
@@ -56,8 +64,9 @@ const TodoItem = ({
           <>
             <CustomButton
               onClick={() => removeTodo()}
-              key={"delete-" + index}
+              key={"delete-" + itemID}
               classes="btn-outline-danger"
+              buttonKey={"delete-" + itemID}
             >
               <Trash />
             </CustomButton>
