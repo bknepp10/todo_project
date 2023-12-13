@@ -18,7 +18,7 @@ const CompletedTodosList = ({
 
   return (
     <>
-      {completedTodos && (
+      {completedTodos.length > 0 && (
         <div className="d-flex flex-column mt-4 card">
           <div
             className="d-flex flex-row card-header"
