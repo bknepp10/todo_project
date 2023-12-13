@@ -1,0 +1,24 @@
+header
+- page title
+- maybe some logos
+
+main container
+- ability to add todos
+- display current todos
+- can mark todos as 'done' and they get removed from current todos
+- completed todos are kept in a separate list
+
+
+wants 
+- make lists scrollable/collapsible
+- sorting/searching? 
+- page theme 
+- maybe add a progress bar?
+
+
+components of todo page
+- list of all todos
+    - a new todo item
+    - existing todo items
+
+- list of completed todos
